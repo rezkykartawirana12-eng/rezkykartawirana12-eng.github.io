@@ -1,1 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Akademi Penjelajah Waktu Nusantara</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
 
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+      color: #fff;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    header {
+      background-color: #1c1c1c;
+      text-align: center;
+      padding: 30px 20px;
+      border-bottom: 3px solid #00e5ff;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin: 0;
+      color: #00e5ff;
+    }
+
+    header p {
+      font-style: italic;
+      color: #ccc;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #111;
+      padding: 10px;
+    }
+
+    nav a {
+      color: #00e5ff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    .hero {
+      background-image: url('https://source.unsplash.com/1600x600/?futuristic,indonesia,history');
+      background-size: cover;
+      background-position: center;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    .content {
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      border: 1px solid #00e5ff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      color: #00e5ff;
+    }
+
+    input, textarea, select, button {
+      font-family: 'Orbitron', sans-serif;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      background-color: #00e5ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00bcd4;
+    }
+
+    footer {
+      background-color: #1c1c1c;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <header class="fade-in">
+    <h1>Akademi Penjelajah Waktu Nusantara</h1>
+    <p>Menguak masa lalu, membentuk masa depan</p>
+  </header>
+
+  <nav class="fade-in">
+    <a href="#beranda">Beranda</a>
+    <a href="#misi">Misi Waktu</a>
+    <a href="#ruang-dimensi">Ruang Dimensi</a>
+    <a href="#daftar">Daftar</a>
+  </nav>
+
+  <div class="hero fade-in">
+    Belajar Melintasi Zaman
+  </div>
+
+  <div class="content fade-in" id="beranda">
+    <div class="card">
+      <h2>Konsep Unik</h2>
+      <p>Akademi ini menggabungkan kurikulum nasional dengan simulasi perjalanan waktu. Siswa belajar sejarah Indonesia langsung dari “masa lalu” dan teknologi masa depan lewat lab futuristik.</p>
+    </div>
+  </div>
+
+  <div class="content fade-in" id="misi">
+    <div class="card">
+      <h2>Program Waktu</h2>
+      <ul>
+        <li>Simulasi interaktif era Majapahit dan Sriwijaya</li>
+        <li>Eksplorasi masa depan Indonesia tahun 2125</li>
+        <li>Belajar coding dengan tema “mesin waktu”</li>
+        <li>Proyek ilmiah: membangun portal waktu mini</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="content fade-in" id="ruang-dimensi">
+    <div class="card">
+      <h2>Kenapa Akademi Ini?</h2>
+      <p>Karena belajar itu harus seru, imajinatif, dan bikin anak-anak jadi pemikir kreatif. Di sini, mereka bukan cuma murid — mereka adalah penjelajah zaman!</p>
+    </div>
+  </div>
+
+  <div class="content fade-in" id="daftar">
+    <div class="card">
+      <h2>Formulir Pendaftaran</h2>
+      <form>
+        <label for="nama">Nama Lengkap:</label>
+        <input type="text" id="nama" name="nama" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="usia">Usia:</label>
+        <input type="number" id="usia" name="usia" required>
+
+        <label for="program">Pilih Program:</label>
+        <select id="program" name="program">
+          <option value="majapahit">Simulasi Majapahit</option>
+          <option value="2125">Eksplorasi Masa Depan</option>
+          <option value="coding">Coding Mesin Waktu</option>
+        </select>
+
+        <label for="whatsapp">Hubungi lebih lanjut WhatsApp:</label>
+        <input type="tel" id="whatsapp" name="whatsapp" placeholder="+62..." required>
+
+        <label for="pesan">Pesan atau Pertanyaan:</label>
+        <textarea id="pesan" name="pesan" rows="4"></textarea>
+
+        <button type="submit">Kirim Pendaftaran</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="fade-in">
+    &copy; 2025 Akademi Penjelajah Waktu Nusantara | Dibuat oleh para penjaga dimensi
+  </footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.fade-in').forEach((el, i) => {
+        el.style.animationDelay = `${i * 0.3}s`;
+      });
+    });
+  </script>
+</body>
+</html>
