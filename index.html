@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SD Harapan Bangsa</title>
+  <title>Sekolah Petualangan Alam Nusantara</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background-color: #f0f8ff;
+      padding: 0;
+      background: linear-gradient(to right, #e0f7fa, #fff3e0);
+      color: #333;
     }
     header {
-      background-color: #2e8b57;
+      background-color: #00796b;
       color: white;
       padding: 20px;
       text-align: center;
     }
     nav {
-      background-color: #3cb371;
+      background-color: #004d40;
       display: flex;
       justify-content: center;
       padding: 10px;
@@ -31,41 +33,73 @@
     nav a:hover {
       text-decoration: underline;
     }
-    section {
+    .hero {
+      background-image: url('https://source.unsplash.com/1600x600/?indonesia,nature');
+      background-size: cover;
+      background-position: center;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      text-shadow: 2px 2px 5px #000;
+    }
+    .content {
+      padding: 30px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       padding: 20px;
+      margin-bottom: 20px;
     }
     footer {
-      background-color: #2e8b57;
+      background-color: #00796b;
       color: white;
       text-align: center;
-      padding: 10px;
+      padding: 15px;
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>SD Harapan Bangsa</h1>
-    <p>Membangun Generasi Unggul dan Berkarakter</p>
+    <h1>Sekolah Petualangan Alam Nusantara</h1>
+    <p>Belajar, Bertualang, Menjelajah Indonesia</p>
   </header>
-
   <nav>
     <a href="#">Beranda</a>
-    <a href="#">Profil</a>
-    <a href="#">Guru</a>
-    <a href="#">Kegiatan</a>
+    <a href="#">Program</a>
+    <a href="#">Galeri</a>
     <a href="#">Kontak</a>
   </nav>
-
-  <section>
-    <h2>Selamat Datang di Website Resmi SD Harapan Bangsa</h2>
-    <p>SD Harapan Bangsa merupakan sekolah dasar yang berkomitmen untuk memberikan pendidikan terbaik bagi anak-anak Indonesia. Kami mengedepankan nilai-nilai kejujuran, kerja keras, dan rasa hormat dalam setiap aspek pembelajaran.</p>
-    <p>Di website ini, Anda dapat menemukan informasi seputar profil sekolah, kegiatan siswa, prestasi, serta cara menghubungi kami.</p>
-  </section>
-
+  <div class="hero">
+    Jelajahi Alam, Temukan Ilmu
+  </div>
+  <div class="content">
+    <div class="card">
+      <h2>Visi & Misi</h2>
+      <p><strong>Visi:</strong> Menjadi sekolah yang menginspirasi generasi muda untuk mencintai alam dan budaya Indonesia.</p>
+      <p><strong>Misi:</strong> Menggabungkan kurikulum nasional dengan kegiatan eksplorasi alam, budaya, dan teknologi.</p>
+    </div>
+    <div class="card">
+      <h2>Program Unggulan</h2>
+      <ul>
+        <li>Kelas di alam terbuka: belajar di hutan, pantai, dan gunung</li>
+        <li>Ekspedisi budaya ke desa-desa adat</li>
+        <li>Proyek ilmiah berbasis lingkungan</li>
+        <li>Workshop survival dan konservasi</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Kenapa Memilih Kami?</h2>
+      <p>Kami percaya bahwa pendidikan terbaik adalah yang menyatu dengan alam dan kehidupan nyata. Anak-anak kami tumbuh menjadi pembelajar mandiri, peduli lingkungan, dan cinta tanah air.</p>
+    </div>
+  </div>
   <footer>
-    <p>&copy; 2025 SD Harapan Bangsa. Semua hak dilindungi.</p>
+    &copy; 2025 Sekolah Petualangan Alam Nusantara | Dibuat dengan semangat petualang!
   </footer>
-
 </body>
 </html>
