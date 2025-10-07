@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Portal Game Catur & Tic Tac Toe</title>
+  <title>Portal Game: Tic Tac Toe & Catur</title>
   <style>
     body {
       margin: 0;
@@ -86,13 +86,9 @@
 </div>
 
 <div id="chess" class="screen">
-  <h2>Catur vs Bot</h2>
-  <p>Pilih tingkat kesulitan:</p>
-  <button onclick="startChess('easy')">Mudah</button>
-  <button onclick="startChess('medium')">Sedang</button>
-  <button onclick="startChess('hard')">Sulit</button>
+  <h2>Catur vs Bot (Demo)</h2>
+  <p>Versi demo papan catur. AI belum aktif penuh.</p>
   <div id="chessboard"></div>
-  <p id="chessStatus"></p>
   <button onclick="backToMenu()">Kembali</button>
 </div>
 
@@ -108,12 +104,11 @@
   }
 
   // === Tic Tac Toe ===
-  let board = [], botLevel = 'easy', currentPlayer = 'X';
+  let board = [], botLevel = 'easy';
 
   function startTicTacToe(level) {
     botLevel = level;
     board = Array(9).fill('');
-    currentPlayer = 'X';
     document.getElementById('tttStatus').textContent = '';
     const boardDiv = document.getElementById('board');
     boardDiv.innerHTML = '';
@@ -237,8 +232,18 @@
     return wins.some(([a,b,c]) => b[a] === p && b[b] === p && b[c] === p);
   }
 
-  // === Chess (Simplified) ===
-  function startChess(level) {
-    document.getElementById('chessboard').innerHTML = '';
-    document.getElementById('chessStatus').textContent = `Mode: ${level} (Demo: Belum AI penuh)`;
-    for (let
+  // === Catur Demo ===
+  function startChess() {
+    const board = document.getElementById('chessboard');
+    board.innerHTML = '';
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        const square = document.createElement('div');
+        square.className = 'square ' + ((x + y) % 2 === 0 ? 'white' : 'black');
+        square.textContent = '';
+        board.appendChild(square);
+      }
+    }
+  }
+
+  document.query
