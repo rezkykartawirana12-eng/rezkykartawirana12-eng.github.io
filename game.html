@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tebak Angka</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    input, button { padding: 10px; font-size: 16px; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🎯 Tebak Angka 1–100</h1>
+  <p>Masukkan tebakanmu:</p>
+  <input type="number" id="guess" min="1" max="100">
+  <button onclick="checkGuess()">Tebak!</button>
+  <div id="result"></div>
+
+  <script>
+    const secret = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    function checkGuess() {
+      const guess = parseInt(document.getElementById('guess').value);
+      attempts++;
+      const result = document.getElementById('result');
+
+      if (guess === secret) {
+        result.textContent = `🎉 Selamat! Kamu menebak dengan benar dalam ${attempts} percobaan.`;
+      } else if (guess < secret) {
+        result.textContent = '🔼 Terlalu rendah!';
+      } else {
+        result.textContent = '🔽 Terlalu tinggi!';
+      }
+    }
+  </script>
+</body>
+</html>
