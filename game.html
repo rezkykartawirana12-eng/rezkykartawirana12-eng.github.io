@@ -2,56 +2,167 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Tangkap Alien!</title>
+  <title>Alien Jumper</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      font-family: sans-serif;
-      background-color: #000;
-      color: #fff;
-      text-align: center;
+      background: linear-gradient(to top, #222, #000);
     }
-    #score {
-      position: fixed;
+    canvas {
+      display: block;
+      margin: auto;
+      background: #333;
+      border: 2px solid lime;
+    }
+    #info {
+      position: absolute;
       top: 10px;
       left: 10px;
-      font-size: 20px;
-    }
-    .alien {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      background: url('https://i.imgur.com/6o5ZcQF.png') no-repeat center;
-      background-size: cover;
-      cursor: pointer;
+      color: white;
+      font-family: sans-serif;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <h1>Tangkap Alien! 👾</h1>
-  <div id="score">Skor: 0</div>
+<canvas id="game" width="900" height="500"></canvas>
+<div id="info">Level: 1 | Skor: 0</div>
 
-  <script>
-    let score = 0;
+<audio id="jumpSound" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
+<audio id="winSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3"></audio>
 
-    function spawnAlien() {
-      const alien = document.createElement('div');
-      alien.className = 'alien';
-      alien.style.top = Math.random() * (window.innerHeight - 50) + 'px';
-      alien.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+<script>
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const jumpSound = document.getElementById('jumpSound');
+  const winSound = document.getElementById('winSound');
 
-      alien.onclick = () => {
-        score++;
-        document.getElementById('score').textContent = 'Skor: ' + score;
-        alien.remove();
-      };
+  let keys = {};
+  let level = 1;
+  let score = 0;
 
-      document.body.appendChild(alien);
+  const gravity = 0.5;
+  const alien = {
+    x: 50, y: 400, width: 40, height: 40,
+    dx: 0, dy: 0, color: 'lime',
+    onGround: false
+  };
 
-      setTimeout(() => {
-        if (document.body.contains(alien)) alien.remove();
-      }, 1500);
+  let platforms = [];
+  let coins = [];
+
+  function generateLevel(lvl) {
+    platforms = [
+      { x: 0, y: 460, width: 900, height: 40 },
+      { x: 200, y: 400 - lvl * 10, width: 100, height: 20 },
+      { x: 400, y: 340 - lvl * 10, width: 100, height: 20 },
+      { x: 600, y: 280 - lvl * 10, width: 100, height: 20 }
+    ];
+    coins = platforms.slice(1).map(p => ({
+      x: p.x + 30,
+      y: p.y - 20,
+      width: 20,
+      height: 20,
+      collected: false
+    }));
+  }
+
+  generateLevel(level);
+
+  function drawRect(obj, color) {
+    ctx.fillStyle = color || obj.color || '#888';
+    ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+  }
+
+  function drawCoin(coin) {
+    if (!coin.collected) {
+      ctx.beginPath();
+      ctx.arc(coin.x + 10, coin.y + 10, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'gold';
+      ctx.fill();
+    }
+  }
+
+  function update() {
+    alien.dx = 0;
+    if (keys['ArrowLeft']) alien.dx = -4;
+    if (keys['ArrowRight']) alien.dx = 4;
+    if (keys[' '] && alien.onGround) {
+      alien.dy = -10;
+      alien.onGround = false;
+      jumpSound.play();
     }
 
-    setInterval(spawnAlien
+    alien.dy += gravity;
+    alien.x += alien.dx;
+    alien.y += alien.dy;
+
+    // Collision
+    alien.onGround = false;
+    for (let p of platforms) {
+      if (
+        alien.x < p.x + p.width &&
+        alien.x + alien.width > p.x &&
+        alien.y + alien.height < p.y + p.height &&
+        alien.y + alien.height + alien.dy >= p.y
+      ) {
+        alien.dy = 0;
+        alien.y = p.y - alien.height;
+        alien.onGround = true;
+      }
+    }
+
+    // Coin collection
+    for (let c of coins) {
+      if (
+        !c.collected &&
+        alien.x < c.x + c.width &&
+        alien.x + alien.width > c.x &&
+        alien.y < c.y + c.height &&
+        alien.y + alien.height > c.y
+      ) {
+        c.collected = true;
+        score += 10;
+        document.getElementById('info').textContent = `Level: ${level} | Skor: ${score}`;
+      }
+    }
+
+    // Level complete
+    if (coins.every(c => c.collected)) {
+      winSound.play();
+      level++;
+      alien.x = 50;
+      alien.y = 400;
+      generateLevel(level);
+      document.getElementById('info').textContent = `Level: ${level} | Skor: ${score}`;
+    }
+
+    // Boundaries
+    if (alien.y > canvas.height) {
+      alien.x = 50;
+      alien.y = 400;
+      alien.dy = 0;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawRect(alien);
+    for (let p of platforms) drawRect(p, '#888');
+    for (let c of coins) drawCoin(c);
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  document.addEventListener('keydown', e => keys[e.key] = true);
+  document.addEventListener('keyup', e => keys[e.key] = false);
+
+  loop();
+</script>
+</body>
+</html>
