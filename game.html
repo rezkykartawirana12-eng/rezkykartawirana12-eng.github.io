@@ -56,193 +56,184 @@
 <div id="menu">
   <h1>🎮 Portal Game HTML</h1>
   <button class="gameBtn" onclick="launchGame('angry')">Main Angry Bird Jumper</button>
-  <button class="gameBtn" onclick="launchGame('snake')">Main Game Ular</button>
+  <button class="gameBtn" onclick="launchGame('snake')">Main Snake Game</button>
+  <button class="gameBtn" onclick="launchGame('meteor')">Main Meteor Dodge</button>
 </div>
 
 <canvas id="game" width="900" height="500"></canvas>
-<div id="info">Level: 1 | Skor: 0</div>
+<div id="info">Info</div>
 
 <script>
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-  const info = document.getElementById('info');
-  const menu = document.getElementById('menu');
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const info = document.getElementById('info');
+const menu = document.getElementById('menu');
+let keys = {};
+let currentGame = '';
+let loopId;
 
-  let keys = {};
-  let currentGame = '';
-  let loopId;
+// === Angry Bird Jumper ===
+const birdImg = new Image();
+birdImg.src = 'https://i.imgur.com/1XqZ1Zr.png';
+let level = 1, score = 0;
+const gravity = 0.5;
+const player = { x: 50, y: 400, width: 40, height: 40, dx: 0, dy: 0, onGround: false };
+let platforms = [], coins = [];
 
-  // === Angry Bird Jumper ===
-  const birdImg = new Image();
-  birdImg.src = 'https://i.imgur.com/1XqZ1Zr.png';
-  let level = 1, score = 0, mode = 'easy';
-  const gravity = 0.5;
-  const player = { x: 50, y: 400, width: 40, height: 40, dx: 0, dy: 0, onGround: false };
-  let platforms = [], coins = [];
-
-  function generateLevel(lvl) {
-    platforms = [{ x: 0, y: 460, width: 900, height: 40 }];
-    coins = [];
-    let count = 3 + lvl;
-    for (let i = 0; i < count; i++) {
-      let px = 150 + i * (100 - lvl * 2);
-      let py = 400 - i * (20 + lvl * 2);
-      platforms.push({ x: px, y: py, width: 100, height: 20 });
-      coins.push({ x: px + 40, y: py - 20, width: 20, height: 20, collected: false });
-    }
-    canvas.style.background = `hsl(${lvl * 36}, 50%, 30%)`;
+function generateLevel(lvl) {
+  platforms = [{ x: 0, y: 460, width: 900, height: 40 }];
+  coins = [];
+  let count = 3 + lvl;
+  for (let i = 0; i < count; i++) {
+    let px = 150 + i * (100 - lvl * 2);
+    let py = 400 - i * (20 + lvl * 2);
+    platforms.push({ x: px, y: py, width: 100, height: 20 });
+    coins.push({ x: px + 40, y: py - 20, width: 20, height: 20, collected: false });
   }
+  canvas.style.background = `hsl(${lvl * 36}, 50%, 30%)`;
+}
 
-  function drawAngryBird() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(birdImg, player.x, player.y, player.width, player.height);
-    platforms.forEach(p => {
-      ctx.fillStyle = '#888';
-      ctx.fillRect(p.x, p.y, p.width, p.height);
-    });
-    coins.forEach(c => {
-      if (!c.collected) {
-        ctx.beginPath();
-        ctx.arc(c.x + 10, c.y + 10, 10, 0, Math.PI * 2);
-        ctx.fillStyle = 'gold';
-        ctx.fill();
-      }
-    });
-  }
-
-  function updateAngryBird() {
-    player.dx = 0;
-    if (keys['ArrowLeft']) player.dx = -4;
-    if (keys['ArrowRight']) player.dx = 4;
-    if (keys['w'] && player.onGround) {
-      player.dy = -10;
-      player.onGround = false;
+function drawAngryBird() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(birdImg, player.x, player.y, player.width, player.height);
+  platforms.forEach(p => {
+    ctx.fillStyle = '#888';
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+  });
+  coins.forEach(c => {
+    if (!c.collected) {
+      ctx.beginPath();
+      ctx.arc(c.x + 10, c.y + 10, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'gold';
+      ctx.fill();
     }
-    player.dy += gravity;
-    player.x += player.dx;
-    player.y += player.dy;
+  });
+  info.textContent = `Level: ${level} | Skor: ${score}`;
+}
 
+function updateAngryBird() {
+  player.dx = 0;
+  if (keys['ArrowLeft']) player.dx = -4;
+  if (keys['ArrowRight']) player.dx = 4;
+  if (keys['w'] && player.onGround) {
+    player.dy = -10;
     player.onGround = false;
-    platforms.forEach(p => {
-      if (player.x < p.x + p.width &&
-          player.x + player.width > p.x &&
-          player.y + player.height < p.y + p.height &&
-          player.y + player.height + player.dy >= p.y) {
-        player.dy = 0;
-        player.y = p.y - player.height;
-        player.onGround = true;
-      }
-    });
+  }
+  player.dy += gravity;
+  player.x += player.dx;
+  player.y += player.dy;
 
-    coins.forEach(c => {
-      if (!c.collected &&
-          player.x < c.x + c.width &&
-          player.x + player.width > c.x &&
-          player.y < c.y + c.height &&
-          player.y + player.height > c.y) {
-        c.collected = true;
-        score += 10;
-        info.textContent = `Level: ${level} | Skor: ${score}`;
-      }
-    });
-
-    if (coins.every(c => c.collected)) {
-      level++;
-      if (level > 10) level = 1;
-      player.x = 50;
-      player.y = 400;
-      generateLevel(level);
-      info.textContent = `Level: ${level} | Skor: ${score}`;
+  player.onGround = false;
+  platforms.forEach(p => {
+    if (player.x < p.x + p.width &&
+        player.x + player.width > p.x &&
+        player.y + player.height < p.y + p.height &&
+        player.y + player.height + player.dy >= p.y) {
+      player.dy = 0;
+      player.y = p.y - player.height;
+      player.onGround = true;
     }
+  });
 
-    if (player.y > canvas.height) {
-      alert('Kamu jatuh! Game ulang dari awal.');
-      stopGame();
+  coins.forEach(c => {
+    if (!c.collected &&
+        player.x < c.x + c.width &&
+        player.x + player.width > c.x &&
+        player.y < c.y + c.height &&
+        player.y + player.height > c.y) {
+      c.collected = true;
+      score += 10;
     }
+  });
+
+  if (coins.every(c => c.collected)) {
+    level++;
+    if (level > 10) level = 1;
+    player.x = 50;
+    player.y = 400;
+    generateLevel(level);
   }
 
-  // === Snake Game ===
-  let snake = [], food = {}, dir = 'right', snakeScore = 0;
+  if (player.y > canvas.height) {
+    alert('Kamu jatuh! Game ulang dari awal.');
+    stopGame();
+  }
+}
 
-  function initSnake() {
-    snake = [{ x: 10, y: 10 }];
+// === Snake Game ===
+let snake = [], food = {}, dir = 'right', snakeScore = 0;
+
+function initSnake() {
+  snake = [{ x: 10, y: 10 }];
+  food = { x: Math.floor(Math.random() * 30), y: Math.floor(Math.random() * 20) };
+  dir = 'right';
+  snakeScore = 0;
+  canvas.style.background = '#222';
+}
+
+function drawSnake() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'lime';
+  snake.forEach(s => ctx.fillRect(s.x * 30, s.y * 25, 28, 23));
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * 30, food.y * 25, 28, 23);
+  info.textContent = `Skor: ${snakeScore}`;
+}
+
+function updateSnake() {
+  let head = { ...snake[0] };
+  if (dir === 'right') head.x++;
+  if (dir === 'left') head.x--;
+  if (dir === 'up') head.y--;
+  if (dir === 'down') head.y++;
+
+  if (head.x < 0 || head.y < 0 || head.x >= 30 || head.y >= 20 ||
+      snake.some(s => s.x === head.x && s.y === head.y)) {
+    alert('Game Ular selesai! Skor: ' + snakeScore);
+    stopGame();
+    return;
+  }
+
+  snake.unshift(head);
+  if (head.x === food.x && head.y === food.y) {
+    snakeScore += 10;
     food = { x: Math.floor(Math.random() * 30), y: Math.floor(Math.random() * 20) };
-    dir = 'right';
-    snakeScore = 0;
-    canvas.style.background = '#222';
+  } else {
+    snake.pop();
   }
+}
 
-  function drawSnake() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'lime';
-    snake.forEach(s => ctx.fillRect(s.x * 30, s.y * 25, 28, 23));
-    ctx.fillStyle = 'red';
-    ctx.fillRect(food.x * 30, food.y * 25, 28, 23);
-    info.textContent = `Skor: ${snakeScore}`;
+// === Meteor Dodge ===
+let dodger = { x: 400, y: 450, width: 40, height: 40 };
+let meteors = [], meteorSpeed = 2, meteorLevel = 1, meteorScore = 0;
+
+function initMeteor() {
+  dodger.x = 400;
+  meteors = [];
+  meteorSpeed = 2 + meteorLevel;
+  for (let i = 0; i < meteorLevel + 2; i++) {
+    meteors.push({
+      x: Math.random() * 860,
+      y: -Math.random() * 500,
+      width: 40,
+      height: 40
+    });
   }
+  canvas.style.background = `radial-gradient(circle at center, #000, #222)`;
+}
 
-  function updateSnake() {
-    let head = { ...snake[0] };
-    if (dir === 'right') head.x++;
-    if (dir === 'left') head.x--;
-    if (dir === 'up') head.y--;
-    if (dir === 'down') head.y++;
+function drawMeteor() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(dodger.x, dodger.y, dodger.width, dodger.height);
+  ctx.fillStyle = 'orange';
+  meteors.forEach(m => {
+    ctx.beginPath();
+    ctx.arc(m.x + 20, m.y + 20, 20, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  info.textContent = `Level: ${meteorLevel} | Skor: ${meteorScore}`;
+}
 
-    if (head.x < 0 || head.y < 0 || head.x >= 30 || head.y >= 20 ||
-        snake.some(s => s.x === head.x && s.y === head.y)) {
-      alert('Game Ular selesai! Skor: ' + snakeScore);
-      stopGame();
-      return;
-    }
-
-    snake.unshift(head);
-    if (head.x === food.x && head.y === food.y) {
-      snakeScore += 10;
-      food = { x: Math.floor(Math.random() * 30), y: Math.floor(Math.random() * 20) };
-    } else {
-      snake.pop();
-    }
-  }
-
-  // === Game Control ===
-  function launchGame(name) {
-    currentGame = name;
-    menu.style.display = 'none';
-    canvas.style.display = 'block';
-    info.style.display = 'block';
-    if (name === 'angry') {
-      level = 1;
-      score = 0;
-      player.x = 50;
-      player.y = 400;
-      generateLevel(level);
-    }
-    if (name === 'snake') {
-      initSnake();
-    }
-    loop();
-  }
-
-  function stopGame() {
-    cancelAnimationFrame(loopId);
-    canvas.style.display = 'none';
-    info.style.display = 'none';
-    menu.style.display = 'flex';
-  }
-
-  function loop() {
-    if (currentGame === 'angry') {
-      updateAngryBird();
-      drawAngryBird();
-    } else if (currentGame === 'snake') {
-      updateSnake();
-      drawSnake();
-    }
-    loopId = requestAnimationFrame(loop);
-  }
-
-  document.addEventListener('keydown', e => {
-    keys[e.key] = true;
-    if (currentGame === 'snake') {
-      if (e.key === 'ArrowUp') dir = 'up';
-      if (e.key === 'ArrowDown') dir =
+function updateMeteor() {
+  
