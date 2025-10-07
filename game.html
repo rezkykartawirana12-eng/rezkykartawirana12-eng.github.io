@@ -8,9 +8,34 @@
       margin: 0;
       overflow: hidden;
       background: linear-gradient(to top, #222, #000);
+      font-family: sans-serif;
+    }
+    #startScreen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    #startScreen h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    #startScreen button {
+      padding: 15px 30px;
+      font-size: 20px;
+      background: lime;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
     }
     canvas {
-      display: block;
+      display: none;
       margin: auto;
       background: #333;
       border: 2px solid lime;
@@ -20,12 +45,19 @@
       top: 10px;
       left: 10px;
       color: white;
-      font-family: sans-serif;
       font-size: 18px;
+      display: none;
     }
   </style>
 </head>
 <body>
+
+<div id="startScreen">
+  <h1>👽 Alien Jumper</h1>
+  <p>Kumpulkan koin, naik level, dan jadilah alien terhebat!</p>
+  <button onclick="startGame()">Mulai Game</button>
+</div>
+
 <canvas id="game" width="900" height="500"></canvas>
 <div id="info">Level: 1 | Skor: 0</div>
 
@@ -37,10 +69,13 @@
   const ctx = canvas.getContext('2d');
   const jumpSound = document.getElementById('jumpSound');
   const winSound = document.getElementById('winSound');
+  const info = document.getElementById('info');
+  const startScreen = document.getElementById('startScreen');
 
   let keys = {};
   let level = 1;
   let score = 0;
+  let gameStarted = false;
 
   const gravity = 0.5;
   const alien = {
@@ -51,6 +86,14 @@
 
   let platforms = [];
   let coins = [];
+
+  function startGame() {
+    startScreen.style.display = 'none';
+    canvas.style.display = 'block';
+    info.style.display = 'block';
+    gameStarted = true;
+    loop();
+  }
 
   function generateLevel(lvl) {
     platforms = [
@@ -98,7 +141,6 @@
     alien.x += alien.dx;
     alien.y += alien.dy;
 
-    // Collision
     alien.onGround = false;
     for (let p of platforms) {
       if (
@@ -113,7 +155,6 @@
       }
     }
 
-    // Coin collection
     for (let c of coins) {
       if (
         !c.collected &&
@@ -124,21 +165,19 @@
       ) {
         c.collected = true;
         score += 10;
-        document.getElementById('info').textContent = `Level: ${level} | Skor: ${score}`;
+        info.textContent = `Level: ${level} | Skor: ${score}`;
       }
     }
 
-    // Level complete
     if (coins.every(c => c.collected)) {
       winSound.play();
       level++;
       alien.x = 50;
       alien.y = 400;
       generateLevel(level);
-      document.getElementById('info').textContent = `Level: ${level} | Skor: ${score}`;
+      info.textContent = `Level: ${level} | Skor: ${score}`;
     }
 
-    // Boundaries
     if (alien.y > canvas.height) {
       alien.x = 50;
       alien.y = 400;
@@ -154,6 +193,7 @@
   }
 
   function loop() {
+    if (!gameStarted) return;
     update();
     draw();
     requestAnimationFrame(loop);
@@ -161,8 +201,6 @@
 
   document.addEventListener('keydown', e => keys[e.key] = true);
   document.addEventListener('keyup', e => keys[e.key] = false);
-
-  loop();
 </script>
 </body>
 </html>
