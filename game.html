@@ -2,32 +2,33 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Angry Bird Jumper</title>
+  <title>Portal Game HTML</title>
   <style>
     body {
       margin: 0;
-      overflow: hidden;
-      background: linear-gradient(to top, #222, #000);
       font-family: sans-serif;
+      background: #111;
+      color: white;
+      overflow: hidden;
     }
-    #startScreen {
+    #menu {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      color: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      background: #000;
       z-index: 10;
     }
-    #startScreen h1 {
+    #menu h1 {
       font-size: 48px;
       margin-bottom: 20px;
     }
-    #startScreen button {
+    .gameBtn {
       padding: 15px 30px;
+      margin: 10px;
       font-size: 20px;
       background: crimson;
       color: white;
@@ -37,15 +38,14 @@
     }
     canvas {
       display: none;
-      margin: auto;
       background: #333;
       border: 2px solid crimson;
+      margin: auto;
     }
     #info {
       position: absolute;
       top: 10px;
       left: 10px;
-      color: white;
       font-size: 18px;
       display: none;
     }
@@ -53,131 +53,102 @@
 </head>
 <body>
 
-<div id="startScreen">
-  <h1>🐦 Angry Bird Jumper</h1>
-  <p>Kumpulkan koin, hindari rintangan, dan naik level!</p>
-  <button onclick="startGame()">Mulai Game</button>
+<div id="menu">
+  <h1>🎮 Portal Game HTML</h1>
+  <button class="gameBtn" onclick="launchGame('angry')">Main Angry Bird Jumper</button>
+  <button class="gameBtn" onclick="launchGame('snake')">Main Game Ular</button>
 </div>
 
 <canvas id="game" width="900" height="500"></canvas>
 <div id="info">Level: 1 | Skor: 0</div>
 
-<audio id="jumpSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
-<audio id="winSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3" preload="auto"></audio>
-
 <script>
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
-  const jumpSound = document.getElementById('jumpSound');
-  const winSound = document.getElementById('winSound');
   const info = document.getElementById('info');
-  const startScreen = document.getElementById('startScreen');
+  const menu = document.getElementById('menu');
 
   let keys = {};
-  let level = 1;
-  let score = 0;
-  let gameStarted = false;
-  const gravity = 0.5;
+  let currentGame = '';
+  let loopId;
 
+  // === Angry Bird Jumper ===
   const birdImg = new Image();
-  birdImg.src = 'https://i.imgur.com/1XqZ1Zr.png'; // Gambar Angry Bird
-
-  const player = {
-    x: 50, y: 400, width: 40, height: 40,
-    dx: 0, dy: 0,
-    onGround: false
-  };
-
-  let platforms = [];
-  let coins = [];
-
-  function startGame() {
-    startScreen.style.display = 'none';
-    canvas.style.display = 'block';
-    info.style.display = 'block';
-    gameStarted = true;
-    loop();
-  }
+  birdImg.src = 'https://i.imgur.com/1XqZ1Zr.png';
+  let level = 1, score = 0, mode = 'easy';
+  const gravity = 0.5;
+  const player = { x: 50, y: 400, width: 40, height: 40, dx: 0, dy: 0, onGround: false };
+  let platforms = [], coins = [];
 
   function generateLevel(lvl) {
-    platforms = [
-      { x: 0, y: 460, width: 900, height: 40 }
-    ];
+    platforms = [{ x: 0, y: 460, width: 900, height: 40 }];
     coins = [];
-
-    for (let i = 0; i < lvl + 2; i++) {
-      const px = 150 + i * 150;
-      const py = 400 - i * 30;
+    let count = 3 + lvl;
+    for (let i = 0; i < count; i++) {
+      let px = 150 + i * (100 - lvl * 2);
+      let py = 400 - i * (20 + lvl * 2);
       platforms.push({ x: px, y: py, width: 100, height: 20 });
       coins.push({ x: px + 40, y: py - 20, width: 20, height: 20, collected: false });
     }
+    canvas.style.background = `hsl(${lvl * 36}, 50%, 30%)`;
   }
 
-  generateLevel(level);
-
-  function drawRect(obj, color) {
-    ctx.fillStyle = color || '#888';
-    ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
-  }
-
-  function drawCoin(coin) {
-    if (!coin.collected) {
-      ctx.beginPath();
-      ctx.arc(coin.x + 10, coin.y + 10, 10, 0, Math.PI * 2);
-      ctx.fillStyle = 'gold';
-      ctx.fill();
-    }
-  }
-
-  function drawPlayer() {
+  function drawAngryBird() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(birdImg, player.x, player.y, player.width, player.height);
+    platforms.forEach(p => {
+      ctx.fillStyle = '#888';
+      ctx.fillRect(p.x, p.y, p.width, p.height);
+    });
+    coins.forEach(c => {
+      if (!c.collected) {
+        ctx.beginPath();
+        ctx.arc(c.x + 10, c.y + 10, 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'gold';
+        ctx.fill();
+      }
+    });
   }
 
-  function update() {
+  function updateAngryBird() {
     player.dx = 0;
     if (keys['ArrowLeft']) player.dx = -4;
     if (keys['ArrowRight']) player.dx = 4;
-    if (keys[' '] && player.onGround) {
+    if (keys['w'] && player.onGround) {
       player.dy = -10;
       player.onGround = false;
-      jumpSound.play();
     }
-
     player.dy += gravity;
     player.x += player.dx;
     player.y += player.dy;
 
     player.onGround = false;
-    for (let p of platforms) {
-      if (
-        player.x < p.x + p.width &&
-        player.x + player.width > p.x &&
-        player.y + player.height < p.y + p.height &&
-        player.y + player.height + player.dy >= p.y
-      ) {
+    platforms.forEach(p => {
+      if (player.x < p.x + p.width &&
+          player.x + player.width > p.x &&
+          player.y + player.height < p.y + p.height &&
+          player.y + player.height + player.dy >= p.y) {
         player.dy = 0;
         player.y = p.y - player.height;
         player.onGround = true;
       }
-    }
+    });
 
-    for (let c of coins) {
-      if (
-        !c.collected &&
-        player.x < c.x + c.width &&
-        player.x + player.width > c.x &&
-        player.y < c.y + c.height &&
-        player.y + player.height > c.y
-      ) {
+    coins.forEach(c => {
+      if (!c.collected &&
+          player.x < c.x + c.width &&
+          player.x + player.width > c.x &&
+          player.y < c.y + c.height &&
+          player.y + player.height > c.y) {
         c.collected = true;
         score += 10;
         info.textContent = `Level: ${level} | Skor: ${score}`;
       }
-    }
+    });
 
     if (coins.every(c => c.collected)) {
-      winSound.play();
       level++;
+      if (level > 10) level = 1;
       player.x = 50;
       player.y = 400;
       generateLevel(level);
@@ -185,28 +156,93 @@
     }
 
     if (player.y > canvas.height) {
-      player.x = 50;
-      player.y = 400;
-      player.dy = 0;
+      alert('Kamu jatuh! Game ulang dari awal.');
+      stopGame();
     }
   }
 
-  function draw() {
+  // === Snake Game ===
+  let snake = [], food = {}, dir = 'right', snakeScore = 0;
+
+  function initSnake() {
+    snake = [{ x: 10, y: 10 }];
+    food = { x: Math.floor(Math.random() * 30), y: Math.floor(Math.random() * 20) };
+    dir = 'right';
+    snakeScore = 0;
+    canvas.style.background = '#222';
+  }
+
+  function drawSnake() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawPlayer();
-    for (let p of platforms) drawRect(p);
-    for (let c of coins) drawCoin(c);
+    ctx.fillStyle = 'lime';
+    snake.forEach(s => ctx.fillRect(s.x * 30, s.y * 25, 28, 23));
+    ctx.fillStyle = 'red';
+    ctx.fillRect(food.x * 30, food.y * 25, 28, 23);
+    info.textContent = `Skor: ${snakeScore}`;
+  }
+
+  function updateSnake() {
+    let head = { ...snake[0] };
+    if (dir === 'right') head.x++;
+    if (dir === 'left') head.x--;
+    if (dir === 'up') head.y--;
+    if (dir === 'down') head.y++;
+
+    if (head.x < 0 || head.y < 0 || head.x >= 30 || head.y >= 20 ||
+        snake.some(s => s.x === head.x && s.y === head.y)) {
+      alert('Game Ular selesai! Skor: ' + snakeScore);
+      stopGame();
+      return;
+    }
+
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      snakeScore += 10;
+      food = { x: Math.floor(Math.random() * 30), y: Math.floor(Math.random() * 20) };
+    } else {
+      snake.pop();
+    }
+  }
+
+  // === Game Control ===
+  function launchGame(name) {
+    currentGame = name;
+    menu.style.display = 'none';
+    canvas.style.display = 'block';
+    info.style.display = 'block';
+    if (name === 'angry') {
+      level = 1;
+      score = 0;
+      player.x = 50;
+      player.y = 400;
+      generateLevel(level);
+    }
+    if (name === 'snake') {
+      initSnake();
+    }
+    loop();
+  }
+
+  function stopGame() {
+    cancelAnimationFrame(loopId);
+    canvas.style.display = 'none';
+    info.style.display = 'none';
+    menu.style.display = 'flex';
   }
 
   function loop() {
-    if (!gameStarted) return;
-    update();
-    draw();
-    requestAnimationFrame(loop);
+    if (currentGame === 'angry') {
+      updateAngryBird();
+      drawAngryBird();
+    } else if (currentGame === 'snake') {
+      updateSnake();
+      drawSnake();
+    }
+    loopId = requestAnimationFrame(loop);
   }
 
-  document.addEventListener('keydown', e => keys[e.key] = true);
-  document.addEventListener('keyup', e => keys[e.key] = false);
-</script>
-</body>
-</html>
+  document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+    if (currentGame === 'snake') {
+      if (e.key === 'ArrowUp') dir = 'up';
+      if (e.key === 'ArrowDown') dir =
