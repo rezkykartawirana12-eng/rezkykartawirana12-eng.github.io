@@ -2,248 +2,240 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Portal Game: Tic Tac Toe & Catur</title>
+  <title>Angry Bird Jumper</title>
   <style>
     body {
       margin: 0;
+      overflow: hidden;
+      background: linear-gradient(to top, #222, #000);
       font-family: sans-serif;
-      background: #111;
+    }
+    #startScreen, #endingScreen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
       color: white;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
-    .screen {
-      display: none;
-      padding: 20px;
+    #startScreen h1, #endingScreen h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
     }
-    #menu {
-      display: block;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 18px;
+    #startScreen button {
+      padding: 15px 30px;
+      font-size: 20px;
       background: crimson;
       color: white;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
+      border-radius: 10px;
     }
-    #board {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-gap: 5px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .cell {
-      width: 100px;
-      height: 100px;
-      background: #333;
-      font-size: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    #chessboard {
+    canvas {
+      display: none;
       margin: auto;
-      margin-top: 20px;
-      width: 320px;
-      height: 320px;
-      display: grid;
-      grid-template-columns: repeat(8, 40px);
-      grid-template-rows: repeat(8, 40px);
+      background: #333;
+      border: 2px solid crimson;
     }
-    .square {
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 18px;
+      display: none;
     }
-    .white { background: #eee; }
-    .black { background: #666; }
   </style>
 </head>
 <body>
 
-<div id="menu" class="screen">
-  <h1>🎮 Portal Game</h1>
-  <button onclick="showGame('tictactoe')">Main Tic Tac Toe</button>
-  <button onclick="showGame('chess')">Main Catur</button>
+<div id="startScreen">
+  <h1>🐦 Angry Bird Jumper</h1>
+  <p>Kumpulkan koin, hindari rintangan, dan tamatkan game!</p>
+  <button onclick="startGame()">Mulai Game</button>
 </div>
 
-<div id="tictactoe" class="screen">
-  <h2>Tic Tac Toe vs Bot</h2>
-  <p>Pilih tingkat kesulitan:</p>
-  <button onclick="startTicTacToe('easy')">Mudah</button>
-  <button onclick="startTicTacToe('medium')">Sedang</button>
-  <button onclick="startTicTacToe('hard')">Sulit</button>
-  <div id="board"></div>
-  <p id="tttStatus"></p>
-  <button onclick="backToMenu()">Kembali</button>
+<div id="endingScreen" style="display:none;">
+  <h1>🎉 Tamat!</h1>
+  <p>Kamu berhasil menyelesaikan semua level!</p>
+  <button onclick="restartGame()">Main Lagi</button>
 </div>
 
-<div id="chess" class="screen">
-  <h2>Catur vs Bot (Demo)</h2>
-  <p>Versi demo papan catur. AI belum aktif penuh.</p>
-  <div id="chessboard"></div>
-  <button onclick="backToMenu()">Kembali</button>
-</div>
+<canvas id="game" width="900" height="500"></canvas>
+<div id="info">Level: 1 | Skor: 0</div>
+
+<audio id="jumpSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+<audio id="winSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3" preload="auto"></audio>
 
 <script>
-  function showGame(name) {
-    document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-    document.getElementById(name).style.display = 'block';
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const jumpSound = document.getElementById('jumpSound');
+  const winSound = document.getElementById('winSound');
+  const info = document.getElementById('info');
+  const startScreen = document.getElementById('startScreen');
+  const endingScreen = document.getElementById('endingScreen');
+
+  let keys = {};
+  let level = 1;
+  let score = 0;
+  let gameStarted = false;
+  const gravity = 0.5;
+
+  const birdImg = new Image();
+  birdImg.src = 'https://i.imgur.com/1XqZ1Zr.png';
+
+  const player = {
+    x: 50, y: 400, width: 40, height: 40,
+    dx: 0, dy: 0,
+    onGround: false
+  };
+
+  let platforms = [];
+  let coins = [];
+
+  function startGame() {
+    startScreen.style.display = 'none';
+    canvas.style.display = 'block';
+    info.style.display = 'block';
+    gameStarted = true;
+    level = 1;
+    score = 0;
+    resetPlayer();
+    generateLevel(level);
+    loop();
   }
 
-  function backToMenu() {
-    document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-    document.getElementById('menu').style.display = 'block';
+  function restartGame() {
+    endingScreen.style.display = 'none';
+    startGame();
   }
 
-  // === Tic Tac Toe ===
-  let board = [], botLevel = 'easy';
+  function resetPlayer() {
+    player.x = 50;
+    player.y = 400;
+    player.dy = 0;
+  }
 
-  function startTicTacToe(level) {
-    botLevel = level;
-    board = Array(9).fill('');
-    document.getElementById('tttStatus').textContent = '';
-    const boardDiv = document.getElementById('board');
-    boardDiv.innerHTML = '';
-    for (let i = 0; i < 9; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.onclick = () => playerMove(i);
-      boardDiv.appendChild(cell);
+  function generateLevel(lvl) {
+    platforms = [{ x: 0, y: 460, width: 900, height: 40 }];
+    coins = [];
+
+    let count = 3 + lvl;
+    for (let i = 0; i < count; i++) {
+      let px = 150 + i * (100 - lvl * 2);
+      let py = 400 - i * (20 + lvl * 2);
+      platforms.push({ x: px, y: py, width: 100, height: 20 });
+      coins.push({ x: px + 40, y: py - 20, width: 20, height: 20, collected: false });
+    }
+
+    canvas.style.background = `hsl(${lvl * 36}, 50%, 30%)`;
+  }
+
+  function drawRect(obj, color) {
+    ctx.fillStyle = color || '#888';
+    ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+  }
+
+  function drawCoin(coin) {
+    if (!coin.collected) {
+      ctx.beginPath();
+      ctx.arc(coin.x + 10, coin.y + 10, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'gold';
+      ctx.fill();
     }
   }
 
-  function playerMove(i) {
-    if (board[i] || checkWinner()) return;
-    board[i] = 'X';
-    updateBoard();
-    if (!checkWinner()) setTimeout(botMove, 500);
+  function drawPlayer() {
+    ctx.drawImage(birdImg, player.x, player.y, player.width, player.height);
   }
 
-  function botMove() {
-    let move;
-    if (botLevel === 'easy') {
-      const empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-      move = empty[Math.floor(Math.random() * empty.length)];
-    } else if (botLevel === 'medium') {
-      move = findWinningMove('O') || findWinningMove('X') || randomMove();
-    } else {
-      move = minimax(board, 'O').index;
+  function update() {
+    player.dx = 0;
+    if (keys['ArrowLeft']) player.dx = -4;
+    if (keys['ArrowRight']) player.dx = 4;
+    if (keys['w'] && player.onGround) {
+      player.dy = -10;
+      player.onGround = false;
+      jumpSound.play();
     }
-    if (move !== undefined) board[move] = 'O';
-    updateBoard();
-    checkWinner();
-  }
 
-  function updateBoard() {
-    const cells = document.querySelectorAll('.cell');
-    board.forEach((val, i) => cells[i].textContent = val);
-  }
+    player.dy += gravity;
+    player.x += player.dx;
+    player.y += player.dy;
 
-  function checkWinner() {
-    const wins = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
-    for (let w of wins) {
-      const [a,b,c] = w;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        document.getElementById('tttStatus').textContent = `${board[a]} menang!`;
-        return true;
+    player.onGround = false;
+    for (let p of platforms) {
+      if (
+        player.x < p.x + p.width &&
+        player.x + player.width > p.x &&
+        player.y + player.height < p.y + p.height &&
+        player.y + player.height + player.dy >= p.y
+      ) {
+        player.dy = 0;
+        player.y = p.y - player.height;
+        player.onGround = true;
       }
     }
-    if (board.every(v => v)) {
-      document.getElementById('tttStatus').textContent = 'Seri!';
-      return true;
-    }
-    return false;
-  }
 
-  function findWinningMove(player) {
-    for (let i = 0; i < 9; i++) {
-      if (!board[i]) {
-        board[i] = player;
-        if (checkWinner()) {
-          board[i] = '';
-          return i;
-        }
-        board[i] = '';
+    for (let c of coins) {
+      if (
+        !c.collected &&
+        player.x < c.x + c.width &&
+        player.x + player.width > c.x &&
+        player.y < c.y + c.height &&
+        player.y + player.height > c.y
+      ) {
+        c.collected = true;
+        score += 10;
+        info.textContent = `Level: ${level} | Skor: ${score}`;
       }
     }
-    return null;
-  }
 
-  function randomMove() {
-    const empty = board.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-    return empty[Math.floor(Math.random() * empty.length)];
-  }
-
-  function minimax(newBoard, player) {
-    const availSpots = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-    if (checkWin(newBoard, 'X')) return {score: -10};
-    if (checkWin(newBoard, 'O')) return {score: 10};
-    if (availSpots.length === 0) return {score: 0};
-
-    const moves = [];
-    for (let i of availSpots) {
-      const move = { index: i };
-      newBoard[i] = player;
-      const result = minimax(newBoard, player === 'O' ? 'X' : 'O');
-      move.score = result.score;
-      newBoard[i] = '';
-      moves.push(move);
+    if (coins.every(c => c.collected)) {
+      winSound.play();
+      level++;
+      if (level > 5) {
+        canvas.style.display = 'none';
+        info.style.display = 'none';
+        endingScreen.style.display = 'flex';
+        gameStarted = false;
+        return;
+      }
+      resetPlayer();
+      generateLevel(level);
+      info.textContent = `Level: ${level} | Skor: ${score}`;
     }
 
-    let bestMove;
-    if (player === 'O') {
-      let bestScore = -Infinity;
-      for (let m of moves) {
-        if (m.score > bestScore) {
-          bestScore = m.score;
-          bestMove = m;
-        }
-      }
-    } else {
-      let bestScore = Infinity;
-      for (let m of moves) {
-        if (m.score < bestScore) {
-          bestScore = m.score;
-          bestMove = m;
-        }
-      }
-    }
-    return bestMove;
-  }
-
-  function checkWin(b, p) {
-    const wins = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
-    return wins.some(([a,b,c]) => b[a] === p && b[b] === p && b[c] === p);
-  }
-
-  // === Catur Demo ===
-  function startChess() {
-    const board = document.getElementById('chessboard');
-    board.innerHTML = '';
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 8; x++) {
-        const square = document.createElement('div');
-        square.className = 'square ' + ((x + y) % 2 === 0 ? 'white' : 'black');
-        square.textContent = '';
-        board.appendChild(square);
-      }
+    if (player.y > canvas.height) {
+      alert('Kamu jatuh! Game dimulai dari awal.');
+      startScreen.style.display = 'flex';
+      canvas.style.display = 'none';
+      info.style.display = 'none';
+      gameStarted = false;
     }
   }
 
-  document.query
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPlayer();
+    for (let p of platforms) drawRect(p);
+    for (let c of coins) drawCoin(c);
+  }
+
+  function loop() {
+    if (!gameStarted) return;
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  document.addEventListener('keydown', e => keys[e.key] = true);
+  document.addEventListener('keyup', e => keys[e.key] = false);
+</script>
+</body>
+</html>
