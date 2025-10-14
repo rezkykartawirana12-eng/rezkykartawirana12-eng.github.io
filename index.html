@@ -42,35 +42,39 @@
       height: 100vh;
       text-align: center;
       flex-direction: column;
-      animation: fadeIn 2s ease-in-out;
+      animation: fadeSlideIn 2s ease-out;
     }
 
     h1 {
       font-size: 48px;
-      text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
-      animation: glow 2s infinite alternate;
+      margin: 0;
+      opacity: 0;
+      animation: fadeInText 2s ease-out forwards;
     }
 
     .slogan {
       font-size: 24px;
       margin-top: 10px;
-      color: #00ffff;
-      text-shadow: 0 0 5px #00ffff;
-      animation: fadeIn 3s ease-in-out;
+      color: white;
+      opacity: 0;
+      animation: fadeInText 2s ease-out 1s forwards;
     }
 
-    @keyframes glow {
+    @keyframes fadeSlideIn {
       from {
-        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        transform: translateY(30px);
+        opacity: 0;
       }
       to {
-        text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+        transform: translateY(0);
+        opacity: 1;
       }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeInText {
+      to {
+        opacity: 1;
+      }
     }
   </style>
 </head>
