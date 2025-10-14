@@ -3,49 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SMK TJK Modern</title>
+  <title>SMK TJK Future</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
-    <h1>SMK TJK Modern</h1>
+    <div class="logo">SMK TJK Future</div>
     <nav>
       <ul>
-        <li><a href="#profil">Profil</a></li>
-        <li><a href="#jurusan">Jurusan</a></li>
-        <li><a href="#kontak">Kontak</a></li>
+        <li><a href="#home">Beranda</a></li>
+        <li><a href="#about">Tentang</a></li>
+        <li><a href="#program">Program</a></li>
+        <li><a href="#contact">Kontak</a></li>
       </ul>
     </nav>
   </header>
 
-  <section class="hero">
-    <h2>Belajar Teknologi, Bangun Masa Depan</h2>
-    <p>SMK dengan semangat anak TJK: simple, modern, dan siap kerja!</p>
-    <button onclick="showAlert()">Gabung Sekarang</button>
+  <section id="home" class="hero">
+    <h1>Selamat Datang di SMK TJK Future</h1>
+    <p>Tempat anak TJK berkembang jadi ahli teknologi masa depan.</p>
+    <button onclick="joinUs()">Gabung Sekarang</button>
   </section>
 
-  <section id="profil">
-    <h3>Profil Sekolah</h3>
-    <p>SMK TJK Modern adalah sekolah kejuruan yang fokus pada bidang teknologi jaringan komputer, dengan kurikulum kekinian dan fasilitas lengkap.</p>
+  <section id="about" class="section">
+    <h2>Tentang Kami</h2>
+    <p>SMK TJK Future adalah sekolah kejuruan dengan fokus pada teknologi jaringan, software, dan multimedia. Kami menggabungkan pembelajaran praktis dan inovasi digital.</p>
   </section>
 
-  <section id="jurusan">
-    <h3>Jurusan Unggulan</h3>
-    <ul>
-      <li>Teknik Komputer dan Jaringan</li>
-      <li>Rekayasa Perangkat Lunak</li>
-      <li>Multimedia</li>
-    </ul>
+  <section id="program" class="section">
+    <h2>Program Unggulan</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Teknik Jaringan</h3>
+        <p>Belajar instalasi, konfigurasi, dan keamanan jaringan.</p>
+      </div>
+      <div class="card">
+        <h3>Software Development</h3>
+        <p>Bangun aplikasi web dan mobile dengan teknologi terbaru.</p>
+      </div>
+      <div class="card">
+        <h3>Multimedia</h3>
+        <p>Desain grafis, video editing, dan konten digital kreatif.</p>
+      </div>
+    </div>
   </section>
 
-  <section id="kontak">
-    <h3>Kontak Kami</h3>
-    <p>Email: info@smktjkmodern.sch.id</p>
-    <p>Instagram: @smktjkmodern</p>
+  <section id="contact" class="section">
+    <h2>Kontak Kami</h2>
+    <p>Email: info@smktjkfuture.sch.id</p>
+    <p>Instagram: @smktjkfuture</p>
   </section>
 
   <footer>
-    <p>&copy; 2025 SMK TJK Modern. Dibuat dengan ❤️ oleh anak TJK.</p>
+    <p>&copy; 2025 SMK TJK Future. Dibuat oleh anak TJK, untuk masa depan digital.</p>
   </footer>
 
   <script src="script.js"></script>
