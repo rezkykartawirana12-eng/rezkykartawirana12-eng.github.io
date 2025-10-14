@@ -1,63 +1,142 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SMK TJK Future</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sekolah FutureMind</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+    }
+    header {
+      background: linear-gradient(to right, #00f260, #0575e6);
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #111;
+      padding: 10px;
+    }
+    nav button {
+      background: transparent;
+      border: none;
+      color: #0ff;
+      font-size: 18px;
+      margin: 0 15px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    nav button:hover {
+      color: #fff;
+    }
+    section {
+      display: none;
+      padding: 30px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    section.active {
+      display: block;
+    }
+    .card {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 0 10px #0ff;
+    }
+    .gallery img {
+      width: 100%;
+      max-width: 300px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0ff;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #111;
+      color: #888;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="logo">SMK TJK Future</div>
-    <nav>
-      <ul>
-        <li><a href="#home">Beranda</a></li>
-        <li><a href="#about">Tentang</a></li>
-        <li><a href="#program">Program</a></li>
-        <li><a href="#contact">Kontak</a></li>
-      </ul>
-    </nav>
-  </header>
 
-  <section id="home" class="hero">
-    <h1>Selamat Datang di SMK TJK Future</h1>
-    <p>Tempat anak TJK berkembang jadi ahli teknologi masa depan.</p>
-    <button onclick="joinUs()">Gabung Sekarang</button>
-  </section>
+<header>
+  <h1>Sekolah FutureMind</h1>
+  <p>Mengasah kreativitas, teknologi, dan karakter</p>
+</header>
 
-  <section id="about" class="section">
-    <h2>Tentang Kami</h2>
-    <p>SMK TJK Future adalah sekolah kejuruan dengan fokus pada teknologi jaringan, software, dan multimedia. Kami menggabungkan pembelajaran praktis dan inovasi digital.</p>
-  </section>
+<nav>
+  <button onclick="showSection('profil')">Profil</button>
+  <button onclick="showSection('program')">Program Unggulan</button>
+  <button onclick="showSection('galeri')">Galeri</button>
+  <button onclick="showSection('kontak')">Kontak</button>
+</nav>
 
-  <section id="program" class="section">
+<section id="profil" class="active">
+  <div class="card">
+    <h2>Profil Sekolah</h2>
+    <p>Sekolah FutureMind adalah sekolah berbasis teknologi dan kreativitas yang berlokasi di Jakarta. Kami menggabungkan pembelajaran akademik dengan pengembangan karakter dan inovasi digital.</p>
+  </div>
+</section>
+
+<section id="program">
+  <div class="card">
     <h2>Program Unggulan</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Teknik Jaringan</h3>
-        <p>Belajar instalasi, konfigurasi, dan keamanan jaringan.</p>
-      </div>
-      <div class="card">
-        <h3>Software Development</h3>
-        <p>Bangun aplikasi web dan mobile dengan teknologi terbaru.</p>
-      </div>
-      <div class="card">
-        <h3>Multimedia</h3>
-        <p>Desain grafis, video editing, dan konten digital kreatif.</p>
-      </div>
+    <ul>
+      <li>🔬 STEAM (Science, Technology, Engineering, Arts, Math)</li>
+      <li>💻 Coding & Robotics</li>
+      <li>🌱 Eco School & Green Project</li>
+      <li>🎭 Seni & Teater Digital</li>
+    </ul>
+  </div>
+</section>
+
+<section id="galeri">
+  <div class="card">
+    <h2>Galeri Kegiatan</h2>
+    <div class="gallery">
+      <img src="https://source.unsplash.com/300x200/?school,students" alt="Kegiatan 1">
+      <img src="https://source.unsplash.com/300x200/?robotics,classroom" alt="Kegiatan 2">
+      <img src="https://source.unsplash.com/300x200/?education,technology" alt="Kegiatan 3">
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="contact" class="section">
+<section id="kontak">
+  <div class="card">
     <h2>Kontak Kami</h2>
-    <p>Email: info@smktjkfuture.sch.id</p>
-    <p>Instagram: @smktjkfuture</p>
-  </section>
+    <p>📍 Jl. Inovasi No. 88, Jakarta</p>
+    <p>📞 (021) 1234-5678</p>
+    <p>📧 info@futuremind.sch.id</p>
+  </div>
+</section>
 
-  <footer>
-    <p>&copy; 2025 SMK TJK Future. Dibuat oleh anak TJK, untuk masa depan digital.</p>
-  </footer>
+<footer>
+  &copy; 2025 Sekolah FutureMind. Dibuat dengan ❤️ dan teknologi.
+</footer>
 
-  <script src="script.js"></script>
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+</script>
+
 </body>
 </html>
