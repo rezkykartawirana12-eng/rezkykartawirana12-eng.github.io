@@ -14,19 +14,38 @@
 
     nav {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
       background-color: #111;
-      padding: 15px 0;
+      padding: 15px 30px;
       position: fixed;
       width: 100%;
       top: 0;
       z-index: 100;
     }
 
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideInLeft 1.5s ease-out;
+    }
+
+    .logo-icon {
+      font-size: 24px;
+      animation: rotateGear 3s linear infinite;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: bold;
+      color: #00ccff;
+    }
+
     nav a {
       color: white;
       text-decoration: none;
-      margin: 0 20px;
+      margin: 0 15px;
       font-size: 18px;
       transition: color 0.3s ease;
     }
@@ -56,8 +75,11 @@
       font-size: 24px;
       margin-top: 10px;
       color: white;
-      opacity: 0;
-      animation: fadeInText 2s ease-out 1s forwards;
+      white-space: nowrap;
+      border-right: 2px solid white;
+      width: 0;
+      overflow: hidden;
+      animation: typing 4s steps(40, end) forwards, blink 0.7s step-end infinite;
     }
 
     @keyframes fadeSlideIn {
@@ -76,13 +98,44 @@
         opacity: 1;
       }
     }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        transform: translateX(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes rotateGear {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <nav>
-    <a href="#">Beranda</a>
-    <a href="#">Profil</a>
-    <a href="#">Kontak</a>
+    <div class="logo-area">
+      <div class="logo-icon">⚙️</div>
+      <div class="logo-text">SMKTKJ</div>
+    </div>
+    <div>
+      <a href="#">Beranda</a>
+      <a href="#">Profil</a>
+      <a href="#">Kontak</a>
+    </div>
   </nav>
 
   <div class="container">
