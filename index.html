@@ -3,34 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Akademi KronoTech</title>
+  <title>SMK KronoTech</title>
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       color: #fff;
-      transition: background 0.5s, color 0.5s;
     }
 
-    body.light-mode {
-      background: #f0f0f0;
-      color: #000;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background-color: #111;
     }
 
-    header, footer {
+    header img {
+      height: 50px;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+    nav a {
+      color: #00c6ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    .hero {
       text-align: center;
-      padding: 2rem;
-      background-color: rgba(0, 0, 0, 0.6);
+      padding: 3rem;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
-    body.light-mode header,
-    body.light-mode footer {
-      background-color: #ddd;
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
 
-    section {
-      text-align: center;
+    .section {
       padding: 2rem;
       margin: 2rem;
       background-color: rgba(255, 255, 255, 0.1);
@@ -45,8 +65,7 @@
       border-radius: 5px;
       cursor: pointer;
       color: #000;
-      transition: background 0.3s ease;
-      margin: 0.5rem;
+      margin-top: 1rem;
     }
 
     button:hover {
@@ -54,17 +73,15 @@
       color: #fff;
     }
 
-    .era-buttons button {
-      background-color: #ff9800;
-      color: #fff;
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #111;
+      color: #aaa;
     }
 
-    .era-buttons button:hover {
-      background-color: #e65100;
-    }
-
-    .hidden {
-      display: none;
+    #eventDisplay {
+      animation: hologram 3s infinite;
     }
 
     @keyframes hologram {
@@ -72,48 +89,55 @@
       50% { opacity: 1; transform: scale(1.05); }
       100% { opacity: 0; transform: scale(0.8); }
     }
-
-    #eventDisplay {
-      animation: hologram 3s infinite;
-    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Akademi KronoTech</h1>
-    <p>Menjelajahi Sejarah dengan Teknologi Masa Depan</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/School_icon.svg/1024px-School_icon.svg.png" alt="Logo Sekolah">
+    <nav>
+      <a href="#beranda">Beranda</a>
+      <a href="#profil">Profil</a>
+      <a href="#program">Program</a>
+      <a href="#simulasi">Simulasi</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
   </header>
 
-  <section class="intro">
-    <h2>Portal Sejarah Interaktif</h2>
-    <p>Gunakan simulasi waktu untuk menyelami peristiwa masa lampau secara real-time.</p>
-    <button onclick="startSimulation()">Mulai Simulasi</button>
+  <section class="hero" id="beranda">
+    <h1>Selamat Datang di SMK KronoTech</h1>
+    <p>Sekolah masa depan yang menggabungkan teknologi dan sejarah untuk pembelajaran yang imersif.</p>
   </section>
 
-  <section id="simulation" class="hidden">
-    <h2>Simulasi Waktu Aktif</h2>
+  <section class="section" id="profil">
+    <h2>Profil Sekolah</h2>
+    <p>SMK KronoTech adalah institusi pendidikan yang berfokus pada teknologi masa depan dan pelestarian sejarah. Kami percaya bahwa memahami masa lalu adalah kunci membentuk masa depan.</p>
+  </section>
+
+  <section class="section" id="program">
+    <h2>Program Unggulan</h2>
+    <ul>
+      <li>Simulasi Sejarah Interaktif</li>
+      <li>AI untuk Penelusuran Arsip</li>
+      <li>Virtual Reality Kelas Sejarah</li>
+      <li>Laboratorium KronoDigital</li>
+    </ul>
+  </section>
+
+  <section class="section" id="simulasi">
+    <h2>Simulasi Sejarah</h2>
+    <p>Gunakan teknologi simulasi untuk menyelami peristiwa masa lampau secara real-time.</p>
+    <button onclick="startSimulation()">Mulai Simulasi</button>
     <p id="eventDisplay">Memuat peristiwa sejarah...</p>
   </section>
 
-  <section class="timeline">
-    <h2>Peta Waktu Interaktif</h2>
-    <div class="era-buttons">
-      <button onclick="loadEra('Mesir Kuno')">Mesir Kuno</button>
-      <button onclick="loadEra('Kerajaan Majapahit')">Majapahit</button>
-      <button onclick="loadEra('Revolusi Industri')">Revolusi Industri</button>
-      <button onclick="loadEra('Perang Dunia II')">Perang Dunia II</button>
-      <button onclick="loadEra('Masa Depan')">Masa Depan</button>
-    </div>
-    <p id="eraDisplay">Pilih era untuk melihat simulasi.</p>
-  </section>
-
-  <section class="settings">
-    <h2>Pengaturan Tampilan</h2>
-    <button onclick="toggleMode()">Toggle Mode Siang/Malam</button>
+  <section class="section" id="kontak">
+    <h2>Kontak Kami</h2>
+    <p>Email: info@smkkronotech.sch.id</p>
+    <p>Alamat: Jl. Teknologi Masa Depan No. 42, Pamulang, Banten</p>
   </section>
 
   <footer>
-    <p>&copy; 2025 Akademi KronoTech. Semua hak dilindungi.</p>
+    <p>&copy; 2025 SMK KronoTech. Semua hak dilindungi.</p>
   </footer>
 
   <script>
@@ -126,11 +150,8 @@
     ];
 
     function startSimulation() {
-      document.getElementById("simulation").classList.remove("hidden");
       let index = 0;
       const display = document.getElementById("eventDisplay");
-
-      playSound();
 
       const interval = setInterval(() => {
         display.textContent = events[index];
@@ -140,24 +161,6 @@
           display.textContent += " 🔚 Simulasi selesai.";
         }
       }, 2000);
-    }
-
-    function loadEra(era) {
-      const display = document.getElementById("eraDisplay");
-      display.textContent = `🔍 Menjelajahi era: ${era}...`;
-
-      setTimeout(() => {
-        display.textContent += ` 📖 Simulasi hologram ${era} dimulai.`;
-      }, 2000);
-    }
-
-    function toggleMode() {
-      document.body.classList.toggle("light-mode");
-    }
-
-    function playSound() {
-      const audio = new Audio("https://www.soundjay.com/button/beep-07.wav");
-      audio.play();
     }
   </script>
 </body>
